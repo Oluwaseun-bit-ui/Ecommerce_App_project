@@ -14,7 +14,8 @@ URL: http://127.0.0.1:8000/api/accounts/register/
 
 Headers:
 
-Content-Type: application/json
+key: Content-Type 
+value: application/json
 
 Body (raw JSON):
 
@@ -33,8 +34,8 @@ Method: POST
 URL: http://127.0.0.1:8000/api/accounts/login/
 
 Headers:
-
-Content-Type: application/json
+key: Content-Type 
+value: application/json
 
 Body (raw JSON):
 
@@ -53,8 +54,8 @@ Method: POST
 URL: http://127.0.0.1:8000/api/products/
 
 Headers:
-
-Content-Type: application/json
+key: Content-Type 
+value: application/json
 
 Body (raw JSON):
 
@@ -82,9 +83,9 @@ Method: PUT
 URL: http://127.0.0.1:8000/api/products/2/
 
 Headers:
+key: Content-Type 
+value: application/json
 
-Content-Type: application/json
-Authorization: Token your_auth_token_here
 Body (raw JSON):
 
  {
