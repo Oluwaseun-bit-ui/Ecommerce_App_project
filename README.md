@@ -15,7 +15,7 @@ URL: http://127.0.0.1:8000/api/accounts/register/
 Headers:
 
 key: Content-Type 
-value: application/json
+value: application/json   #kind of data
 
 Body (raw JSON):
 
