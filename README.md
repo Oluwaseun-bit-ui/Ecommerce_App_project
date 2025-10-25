@@ -1,4 +1,4 @@
-My E-commerce capstone project
+My E-commerce project
 
 
  python3 manage.py makemigrations
