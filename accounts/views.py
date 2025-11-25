@@ -1,25 +1,75 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authtoken.models import Token
+
 from .serializers import RegisterSerializer, LoginSerializer
 
+
 class RegisterView(APIView):
+    permission_classes = [AllowAny]  # 👈 registration is open
+
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user = serializer.save()  # create user + token in serializer
+            # get the token created in serializer (or create if not)
+            token, created = Token.objects.get_or_create(user=user)
+
+            return Response(
+                {
+                    "message": "Registration successful",
+                    "username": user.username,
+                    "email": user.email,
+                    "token": token.key,   
+                },
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LoginView(APIView):
+    permission_classes = [AllowAny]  
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = authenticate(
-            username=serializer.validated_data['username'],
-            password=serializer.validated_data['password']
+
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
+
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            return Response(
+                {"error": "Invalid credentials"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        # create or get token for this user
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response(
+            {
+                "message": "Login successful",
+                "username": user.username,
+                "token": token.key,
+            },
+            status=status.HTTP_200_OK,
         )
-        if user:
-            return Response({"message": "Login successful"})
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]  
+
+    def post(self, request):
+        # delete the current user's token (log them out)
+        request.user.auth_token.delete()
+        return Response(
+            {"message": "Logged out successfully"},
+            status=status.HTTP_200_OK,
+        )
