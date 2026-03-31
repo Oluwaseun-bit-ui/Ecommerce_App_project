@@ -1,7 +1,18 @@
 My E-commerce project
+This is a backend e-commerce system built using Django.
 
+## Features
+- User authentication (login & registration)
+- Product and category management
+- REST API endpoints
 
- python3 manage.py makemigrations
+## Tech Stack
+- Python
+- Django
+- SQLite
+
+## How to Run
+python3 manage.py makemigrations
 python3 manage.py migrate
 
 python3 manage.py runserver
